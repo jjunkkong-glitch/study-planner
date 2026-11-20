@@ -107,7 +107,7 @@ button:disabled { opacity: 0.5; cursor: default; }
     <h2 id="h-period">기간과 기본 설정</h2>
     <div class="grid">
       <label class="field" for="f-title">플래너 제목
-        <input id="f-title" type="text" value="2학기 기말고사 대비 계획" maxlength="40">
+        <input id="f-title" type="text" value="" placeholder="ex. 2학기 기말고사 대비 계획" maxlength="40">
       </label>
       <label class="field" for="f-start">계획 시작일
         <input id="f-start" type="date" value="2026-11-10">
@@ -473,7 +473,7 @@ function sheetsFor(tab, m) {
 if (typeof document !== 'undefined') {
 (function () {
   var st = {
-    title: '2학기 기말고사 대비 계획', start: ymd(new Date()), examStart: ymd(new Date()), examEnd: ymd(new Date()),
+    title: "", start: ymd(new Date()), examStart: ymd(new Date()), examEnd: ymd(new Date()),
     weekStart: '1', checks: '3', split: '1', perPage: '6', tab: 'plan',
     subjects: [
       { name: '국어', exam: '', slot: '' }, { name: '영어', exam: '', slot: '' }, { name: '수학', exam: '', slot: '' },
@@ -481,7 +481,7 @@ if (typeof document !== 'undefined') {
     ]
   };
   try {
-    var saved = JSON.parse(localStorage.getItem('planner-tool-v8') || 'null');
+    var saved = JSON.parse(localStorage.getItem('planner-tool-v9') || 'null');
     if (saved && saved.subjects && saved.subjects.length) { st = saved; if (!st.perPage) st.perPage = '6'; if (st.split === undefined) st.split = '1'; st.start = ymd(new Date()); }
   } catch (e) {}
 
@@ -489,7 +489,7 @@ if (typeof document !== 'undefined') {
   var statusEl = $('status'), infoEl = $('info'), previewEl = $('preview');
   var current = [];
 
-  function persist() { try { localStorage.setItem('planner-tool-v8', JSON.stringify(st)); } catch (e) {} }
+  function persist() { try { localStorage.setItem('planner-tool-v9', JSON.stringify(st)); } catch (e) {} }
   function setStatus(t, err) { statusEl.textContent = t || ''; statusEl.className = 'status' + (err ? ' err' : ''); }
 
   function examDays() {

@@ -113,10 +113,10 @@ button:disabled { opacity: 0.5; cursor: default; }
         <input id="f-start" type="date" value="2026-11-10">
       </label>
       <label class="field" for="f-exam-start">시험 첫날
-        <input id="f-exam-start" type="date" value="2026-12-14">
+        <input id="f-exam-start" type="date" value="">
       </label>
       <label class="field" for="f-exam-end">시험 마지막 날
-        <input id="f-exam-end" type="date" value="2026-12-16">
+        <input id="f-exam-end" type="date" value="">
       </label>
       <label class="field" for="f-ws">한 주의 시작
         <select id="f-ws">
@@ -194,7 +194,7 @@ function buildModel(st) {
   if (!st.start || !st.examStart || !st.examEnd) return { error: '날짜를 모두 입력해 주세요.' };
   var start = pd(st.start), es = pd(st.examStart), ee = pd(st.examEnd);
   if (ee < es) ee = es;
-  if (start >= es) return { error: '계획 시작일은 시험 첫날보다 앞이어야 해요.' };
+  if (start >= es) return { error: '시험 첫날과 마지막 날을 선택해 주세요. (계획 시작일은 시험 첫날보다 앞이어야 해요)' };
   var ws = Number(st.weekStart);
   var first = weekStartOf(start, ws);
   var last = weekStartOf(ee, ws);
@@ -473,7 +473,7 @@ function sheetsFor(tab, m) {
 if (typeof document !== 'undefined') {
 (function () {
   var st = {
-    title: '2학기 기말고사 대비 계획', start: ymd(new Date()), examStart: '2026-12-14', examEnd: '2026-12-16',
+    title: '2학기 기말고사 대비 계획', start: ymd(new Date()), examStart: ymd(new Date()), examEnd: ymd(new Date()),
     weekStart: '1', checks: '3', split: '1', perPage: '6', tab: 'plan',
     subjects: [
       { name: '국어', exam: '', slot: '' }, { name: '영어', exam: '', slot: '' }, { name: '수학', exam: '', slot: '' },
@@ -481,7 +481,7 @@ if (typeof document !== 'undefined') {
     ]
   };
   try {
-    var saved = JSON.parse(localStorage.getItem('planner-tool-v7') || 'null');
+    var saved = JSON.parse(localStorage.getItem('planner-tool-v8') || 'null');
     if (saved && saved.subjects && saved.subjects.length) { st = saved; if (!st.perPage) st.perPage = '6'; if (st.split === undefined) st.split = '1'; st.start = ymd(new Date()); }
   } catch (e) {}
 
@@ -489,7 +489,7 @@ if (typeof document !== 'undefined') {
   var statusEl = $('status'), infoEl = $('info'), previewEl = $('preview');
   var current = [];
 
-  function persist() { try { localStorage.setItem('planner-tool-v7', JSON.stringify(st)); } catch (e) {} }
+  function persist() { try { localStorage.setItem('planner-tool-v8', JSON.stringify(st)); } catch (e) {} }
   function setStatus(t, err) { statusEl.textContent = t || ''; statusEl.className = 'status' + (err ? ' err' : ''); }
 
   function examDays() {

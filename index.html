@@ -641,14 +641,29 @@ if (typeof document !== 'undefined') {
     try { if (window.claude && window.claude.use) { var d = await window.claude.use('downloads'); if (d) return d; } } catch (e) {}
     return {
       save: async function (o) {
+        var isPdf = /\.pdf$/i.test(o.filename);
         var blob = o.data instanceof Blob ? o.data : new Blob([o.data], { type: 'text/html;charset=utf-8' });
+        if (isPdf && blob.type !== 'application/pdf') blob = new Blob([blob], { type: 'application/pdf' });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob); a.download = o.filename;
         document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 60000);
       }
     };
   }
+  function inApp() { return /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent); }
+  function inAppMsg() {
+    if (/KAKAOTALK/i.test(navigator.userAgent)) {
+      setStatus('카카오톡 안에서는 저장이 안 돼요. 아래 버튼을 눌러 크롬·사파리로 열어 주세요.', true);
+      var b = document.getElementById('open-ext');
+      if (!b) {
+        b = document.createElement('button'); b.type = 'button'; b.id = 'open-ext'; b.textContent = '기본 브라우저로 열기';
+        b.addEventListener('click', function () { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href); });
+        document.getElementById('status').insertAdjacentElement('afterend', b);
+      }
+    } else setStatus('앱 안에서는 저장이 안 돼요. 오른쪽 위 메뉴에서 크롬·사파리로 열어 주세요.', true);
+  }
+  function isMobile() { return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform)); }
   function saveErr(e) {
     var code = e && e.code;
     if (code === 'declined') return setStatus('저장을 취소했어요.');
@@ -658,6 +673,8 @@ if (typeof document !== 'undefined') {
 
   $('btn-html').addEventListener('click', async function () {
     if (!current.length) return;
+    if (inApp()) return inAppMsg();
+    if (isMobile()) return setStatus('휴대폰에서는 HTML 파일을 열 수 없어요. PDF로 저장해 주세요.', true);
     var dl = await getDownloads();
     if (!dl) return setStatus('이 화면에서는 파일 저장을 쓸 수 없어요. claude.ai에서 이 페이지를 직접 열어 주세요.', true);
     var land = current[0].w > current[0].h;
@@ -670,6 +687,7 @@ if (typeof document !== 'undefined') {
 
   $('btn-pdf').addEventListener('click', async function () {
     if (!current.length) return;
+    if (inApp()) return inAppMsg();
     if (!window.html2canvas || !window.jspdf) return setStatus('PDF 도구를 불러오지 못했어요. 인쇄용 HTML로 저장해 주세요.', true);
     var dl = await getDownloads();
     if (!dl) return setStatus('이 화면에서는 파일 저장을 쓸 수 없어요. claude.ai에서 이 페이지를 직접 열어 주세요.', true);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>학습 플래너 만들기 v2</title>
+<title>학습 플래너 만들기 v1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -99,7 +99,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 <body>
 <div class="wrap">
   <header>
-    <h1>학습 플래너 만들기 <span style="font-size:14px;color:var(--accent);font-weight:700">v2</span></h1>
+    <h1>학습 플래너 만들기 <span style="font-size:14px;color:var(--accent);font-weight:700">v1</span></h1>
     <p class="lead">기간과 과목을 입력하면 A4 플래너가 바로 만들어집니다. 마음에 들면 PDF로 저장해 인쇄하세요.</p>
   </header>
 
@@ -568,23 +568,31 @@ if (typeof document !== 'undefined') {
 
   function render() {
     raf = 0;
-    var m = buildModel(st);
+    var sample = false, m = buildModel(st);
+    if (m.error && st.start && st.examStart && st.examEnd && pd(st.start) >= pd(st.examStart)) {
+      /* Exam dates not chosen yet: show a sample layout so the sheets are visible right away. */
+      var s0 = pd(st.start), tmp = {};
+      for (var k in st) tmp[k] = st[k];
+      tmp.examStart = ymd(addDays(s0, 14)); tmp.examEnd = ymd(addDays(s0, 16));
+      var m2 = buildModel(tmp);
+      if (!m2.error) { m = m2; sample = true; }
+    }
     if (m.error) {
       previewEl.innerHTML = '<div class="pv"><div class="msg">' + esc(m.error) + '</div></div>';
       current = []; infoEl.textContent = ''; setStatus(m.error, true);
       return;
     }
-    setStatus('');
+    setStatus(sample ? '미리보기용 예시 날짜예요. 시험 첫날과 마지막 날을 선택하면 실제 날짜로 바뀌고 저장할 수 있어요.' : '', sample);
     var made = sheetsFor(st.tab, m);
     if (made.error) {
       previewEl.innerHTML = '<div class="pv"><div class="msg">' + esc(made.error) + '</div></div>';
       current = []; infoEl.textContent = ''; setStatus(made.error, true);
       return;
     }
-    current = made;
-    var kinds = { cal: '달력형 (A4 가로) 1장', week: '주간형 (A4 세로) ' + current.length + '장', plan: '과목 계획표 (A4 세로) ' + current.length + '장', retro: '시험 후 회고 (A4 세로) ' + current.length + '장' };
-    infoEl.textContent = kinds[st.tab] + ' · 시험까지 ' + diff(m.es, m.start) + '일';
-    previewEl.innerHTML = current.map(function (s) {
+    current = sample ? [] : made;
+    var kinds = { cal: '달력형 (A4 가로) 1장', week: '주간형 (A4 세로) ' + made.length + '장', plan: '과목 계획표 (A4 세로) ' + made.length + '장', retro: '시험 후 회고 (A4 세로) ' + made.length + '장' };
+    infoEl.textContent = sample ? '' : kinds[st.tab] + ' · 시험까지 ' + diff(m.es, m.start) + '일';
+    previewEl.innerHTML = made.map(function (s) {
       return '<div class="pv" data-w="' + s.w + '" data-h="' + s.h + '"><div class="pv-in">' + s.html + '</div></div>';
     }).join('');
     fit();

@@ -289,10 +289,10 @@ function calSheet(m) {
         var more = d < m.ee;
         var erh = clamp(Math.floor((cellH - 12 - 24 - 4) / Math.max(exl.length + (more ? 1 : 0), 1)), 13, 22);
         var body = exl.length
-          ? '<div style="display:flex;flex-direction:column;gap:2px">' + exl.map(function (x) { return '<div style="height:' + (erh - 2) + 'px;display:flex;align-items:center">' + examCheck(x, Math.min(14, erh - 2), 12) + '</div>'; }).join('') + (more ? studyRow(erh - 2, Math.min(14, erh - 2), 12) : '') + '</div>'
-          : '<div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800">시험 ' + info.examNo + '일차</div>' + (more ? studyRow(erh - 2, Math.min(14, erh - 2), 12) : '') + '</div>';
+          ? '<div style="display:flex;flex-direction:column;gap:2px">' + exl.map(function (x) { return '<div style="height:' + (erh - 2) + 'px;display:flex;align-items:center">' + examCheck(x, Math.min(14, erh - 2), 12) + '</div>'; }).join('') + '</div>'
+          : '';
         cells += '<div style="' + base + 'background:#fff;display:flex;flex-direction:column">' +
-          '<div style="flex:none;background:#17284B;color:#fff;padding:3px 8px;display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:18px">' + label + '</b><span style="font-size:12px;font-weight:700">시험 ' + info.examNo + '일차</span></div>' +
+          '<div style="flex:none;background:#17284B;color:#fff;padding:3px 8px;display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:18px">' + label + '</b></div>' +
           '<div style="flex:1;min-height:0;padding:4px 8px;display:flex;flex-direction:column;justify-content:flex-end;color:#17284B">' + body + '</div></div>';
         continue;
       }
@@ -337,7 +337,7 @@ function weekSheets(m) {
       if (!info.inRange) {
         rows += '<div style="flex:1;min-height:0;' + bt + 'background:#F2F4F8"></div>';
       } else if (info.isExam) {
-        rows += '<div style="flex:1;min-height:0;' + bt + 'display:flex;align-items:stretch"><div style="width:100px;flex:none;background:#17284B;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 12px"><b style="font-size:20px">' + WD[d.getDay()] + '</b><div style="font-size:13px">' + md(d) + '</div></div><div style="flex:1;padding:0 16px;display:flex;flex-direction:column;justify-content:center;color:#17284B"><b style="font-size:16px">시험 ' + info.examNo + '일차</b>' + (examsOn(m, d).length ? '<div style="display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:6px">' + examsOn(m, d).map(function (x) { return examCheck(x, 16, 14); }).join('') + '</div>' : '') + (d < m.ee ? '<div style="margin-top:6px;width:330px">' + studyRow(22, 16, 14) + '</div>' : '') + '</div></div>';
+        rows += '<div style="flex:1;min-height:0;' + bt + 'display:flex;align-items:stretch"><div style="width:100px;flex:none;background:#17284B;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 12px"><b style="font-size:20px">' + WD[d.getDay()] + '</b><div style="font-size:13px">' + md(d) + '</div></div><div style="flex:1;padding:0 16px;display:flex;flex-direction:column;justify-content:center;color:#17284B">'+ (examsOn(m, d).length ? '<div style="display:flex;flex-wrap:wrap;gap:4px 18px">' + examsOn(m, d).map(function (x) { return examCheck(x, 16, 14); }).join('') + '</div>' : '') + '</div></div>';
       } else {
         rows += '<div style="flex:1;min-height:0;' + bt + 'display:grid;grid-template-columns:76px 1fr;align-items:center;padding:0 12px;gap:16px">' + left +
           '<div style="display:flex;flex-direction:column;gap:4px">' + checkRows(m.checks, rh, m.split ? SPLIT_L : null) + '</div></div>';
@@ -401,7 +401,7 @@ function planPage(m, chunk, pageNo, pages, maxN) {
     '<div style="flex:none;border:1px solid #C9D0DD;border-radius:8px;overflow:hidden;height:' + (34 + (subs.length ? subs.length * rowH : 70) + 2) + 'px">' +
       '<div style="display:grid;grid-template-columns:' + cols + ';gap:8px;align-items:center;height:34px;padding:0 12px;background:#EEF3FF;font-size:13px;font-weight:700"><div>과목</div><div>시험 범위</div><div>어떻게 공부할까</div><div>분량 · 횟수</div><div>계획한 사람</div><div>목표 점수</div></div>' +
       rows + '</div>' +
-    '<div style="font-size:13px;color:#556070">시험 범위는 등록한 내용이 들어가며, 비워 두면 직접 적습니다. 분량·횟수는 \'개념 1회, 문제풀이 1회, 오답 1회\'처럼 구체적으로 적습니다. 계획한 사람은 처음에는 \'같이\'가 많아도 괜찮고, 다음 시험에 \'직접\'이 늘면 됩니다.</div>' +
+    '<div style="font-size:13px;color:#556070"><div style="padding-left:12px;text-indent:-12px">* 시험 범위는 등록한 내용이 들어가며, 비워 두면 직접 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 분량·횟수는 \'개념 1회, 문제풀이 1회, 오답 1회\'처럼 구체적으로 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 계획한 사람은 처음에는 \'같이\'가 많아도 괜찮고, 다음 시험에 \'직접\'이 늘면 됩니다.</div></div>' +
     '</div>';
   return { w: W, h: H, html: html };
 }

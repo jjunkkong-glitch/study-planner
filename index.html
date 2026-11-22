@@ -94,6 +94,18 @@ button:disabled { opacity: 0.5; cursor: default; }
 @media print {
   body { padding: 0; background: #fff; }
 }
+
+.dp-input { cursor: pointer; }
+#dp { position: fixed; z-index: 50; width: 266px; background: #fff; border: 1px solid #C9D0DD; border-radius: 10px; box-shadow: 0 8px 24px rgba(23,40,75,.18); padding: 10px; display: none; font-size: 13px; }
+#dp .dp-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-weight: 700; }
+#dp .dp-h button { width: 30px; height: 30px; padding: 0; border: 1px solid #C9D0DD; background: #fff; border-radius: 6px; cursor: pointer; font-size: 15px; }
+#dp .dp-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+#dp .dp-w { font-size: 11px; color: #556070; padding: 4px 0; }
+#dp .dp-d { height: 32px; padding: 0; border: 0; background: transparent; border-radius: 6px; cursor: pointer; font: inherit; color: #17284B; }
+#dp .dp-d:hover:not(:disabled) { background: #EEF3FF; }
+#dp .dp-d.today { outline: 1px solid #2750C8; }
+#dp .dp-d.sel { background: #2750C8; color: #fff; }
+#dp .dp-d:disabled { color: #C2C8D4; cursor: not-allowed; text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -110,13 +122,13 @@ button:disabled { opacity: 0.5; cursor: default; }
         <input id="f-title" type="text" value="" placeholder="ex. 2학기 기말고사 대비 계획" maxlength="40">
       </label>
       <label class="field" for="f-start">계획 시작일
-        <input id="f-start" type="date" value="2026-11-10">
+        <input id="f-start" type="text" readonly inputmode="none" placeholder="날짜 선택" autocomplete="off" class="dp-input" value="2026-11-10">
       </label>
       <label class="field" for="f-exam-start">시험 첫날
-        <input id="f-exam-start" type="date" value="">
+        <input id="f-exam-start" type="text" readonly inputmode="none" placeholder="날짜 선택" autocomplete="off" class="dp-input" value="">
       </label>
       <label class="field" for="f-exam-end">시험 마지막 날
-        <input id="f-exam-end" type="date" value="">
+        <input id="f-exam-end" type="text" readonly inputmode="none" placeholder="날짜 선택" autocomplete="off" class="dp-input" value="">
       </label>
       <label class="field" for="f-ws">한 주의 시작
         <select id="f-ws">
@@ -143,7 +155,7 @@ button:disabled { opacity: 0.5; cursor: default; }
   </section>
 
   <section class="card" aria-labelledby="h-subj">
-    <h2 id="h-subj">시험범위 <span class="hint" style="font-weight:400;color:var(--mute);font-size:13px">과목명과 시험범위를 쓰고, 시험일(숫자)을 선택합니다 (최대 12개)</span></h2>
+    <h2 id="h-subj">시험범위 <span class="hint" style="font-weight:400;color:var(--mute);font-size:13px">과목명과 시험범위를 쓰고, 시험일(숫자)을 선택합니다. 아직 모르면 비워 두거나, 선택한 숫자를 다시 눌러 해제하세요 (최대 12개)</span></h2>
     <div class="subj-list" id="subj-list"></div>
     <div class="actions"><button type="button" id="add-subj">과목 추가</button></div>
   </section>
@@ -159,6 +171,7 @@ button:disabled { opacity: 0.5; cursor: default; }
     <div class="status">사용 순서: 시험 준비 시작 때 ① 과목 계획표 → 전체 일정 ② 달력형 → 매주 ③ 주간형 → 시험이 끝나면 ④ 시험 후 회고</div>
     <div class="actions">
       <button type="button" class="primary" id="btn-pdf">PDF로 저장</button>
+      <button type="button" id="btn-pdf-all">4가지 유형 PDF 한 번에 저장</button>
       <button type="button" id="btn-html">인쇄용 HTML로 저장</button>
       <span class="status" id="status" role="status" aria-live="polite"></span>
     </div>
@@ -533,6 +546,11 @@ if (typeof document !== 'undefined') {
         var r = document.createElement('input');
         r.type = 'radio'; r.name = 'exam-' + i; r.value = key; r.checked = s.exam === key;
         r.setAttribute('aria-label', name.value + ' 시험일 ' + key);
+        var wasOn = false;
+        lab.addEventListener('mousedown', function () { wasOn = r.checked; });
+        lab.addEventListener('touchstart', function () { wasOn = r.checked; }, { passive: true });
+        r.addEventListener('click', function () { if (wasOn) { r.checked = false; st.subjects[i].exam = ''; update(); } wasOn = false; });
+        r.addEventListener('keydown', function (e) { if ((e.key === ' ' || e.key === 'Enter') && r.checked) { e.preventDefault(); r.checked = false; st.subjects[i].exam = ''; update(); } });
         r.addEventListener('change', function () { st.subjects[i].exam = key; update(); });
         var t = document.createElement('span'); t.textContent = String(pd(key).getDate());
         lab.appendChild(r); lab.appendChild(t); sd.appendChild(lab);
@@ -590,7 +608,7 @@ if (typeof document !== 'undefined') {
       return;
     }
     current = sample ? [] : made;
-    var kinds = { cal: '달력형 (A4 가로) 1장', week: '주간형 (A4 세로) ' + made.length + '장', plan: '과목 계획표 (A4 세로) ' + made.length + '장', retro: '시험 후 회고 (A4 세로) ' + made.length + '장' };
+    var kinds = { cal: '달력형 (가로 달력을 세로 A4에 돌려서 출력) 1장', week: '주간형 (A4 세로) ' + made.length + '장', plan: '과목 계획표 (A4 세로) ' + made.length + '장', retro: '시험 후 회고 (A4 세로) ' + made.length + '장' };
     infoEl.textContent = sample ? '' : kinds[st.tab] + ' · 시험까지 ' + diff(m.es, m.start) + '일';
     previewEl.innerHTML = made.map(function (s) {
       return '<div class="pv" data-w="' + s.w + '" data-h="' + s.h + '"><div class="pv-in">' + s.html + '</div></div>';
@@ -603,8 +621,25 @@ if (typeof document !== 'undefined') {
     var el = $(p[0]);
     el.value = st[p[1]];
     el.addEventListener('input', function () { st[p[1]] = el.value; update(); });
-    el.addEventListener('change', function () { st[p[1]] = el.value; if (p[1] === 'examStart' || p[1] === 'examEnd') renderSubjects(); update(); });
+    el.addEventListener('change', function () { st[p[1]] = el.value; if (p[1] === 'start') { syncExamStart(); renderSubjects(); } if (p[1] === 'examStart') syncExamEnd(); if (p[1] === 'examStart' || p[1] === 'examEnd') renderSubjects(); update(); });
   });
+  /* Exam start follows the plan start date (earlier dates are greyed out); exam end cannot be earlier than the exam start. */
+  function okDate(v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') && Number(v.slice(0, 4)) >= 2000; }
+  /* Only fix a value once it is a complete date: while a date is being typed the field is empty or has a tiny year. */
+  function syncExamStart(init) {
+    var el = $('f-exam-start');
+    el.min = okDate(st.start) ? st.start : '';
+    if (init && !st.examStart && okDate(st.start)) { st.examStart = st.start; el.value = st.examStart; }
+    else if (okDate(st.start) && okDate(st.examStart) && st.examStart < st.start) { st.examStart = st.start; el.value = st.examStart; }
+    syncExamEnd(init);
+  }
+  function syncExamEnd(init) {
+    var endEl = $('f-exam-end');
+    endEl.min = okDate(st.examStart) ? st.examStart : '';
+    if (init && !st.examEnd && okDate(st.examStart)) { st.examEnd = st.examStart; endEl.value = st.examEnd; }
+    else if (okDate(st.examStart) && okDate(st.examEnd) && st.examEnd < st.examStart) { st.examEnd = st.examStart; endEl.value = st.examEnd; }
+  }
+  syncExamStart(true);
   $('add-subj').addEventListener('click', function () {
     if (st.subjects.length >= MAX_SUBJECTS) return;
     st.subjects.push({ name: '', range: '', exam: '', slot: '' }); renderSubjects(); update();
@@ -677,44 +712,122 @@ if (typeof document !== 'undefined') {
     if (isMobile()) return setStatus('휴대폰에서는 HTML 파일을 열 수 없어요. PDF로 저장해 주세요.', true);
     var dl = await getDownloads();
     if (!dl) return setStatus('이 화면에서는 파일 저장을 쓸 수 없어요. claude.ai에서 이 페이지를 직접 열어 주세요.', true);
-    var land = current[0].w > current[0].h;
+    var land = current[0].w > current[0].h, rot = land;
     var html = '<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>' + esc(st.title) + '</title>' +
       '<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">' +
-      '<style>' + collectSheetCss() + '@page{size:A4 ' + (land ? 'landscape' : 'portrait') + ';margin:0}html,body{margin:0;background:#fff}.sheet{page-break-after:always;break-after:page}</style></head><body>' +
-      current.map(function (s) { return s.html.split(CREDIT).join(''); }).join('') + '</body></html>';
+      '<style>' + collectSheetCss() + '@page{size:A4 ' + ((land && !rot) ? 'landscape' : 'portrait') + ';margin:0}html,body{margin:0;background:#fff}' + (rot ? '.rp{width:794px;height:1123px;overflow:hidden;page-break-after:always;break-after:page}.rp>div{transform:translate(794px,0) rotate(90deg);transform-origin:0 0;width:1123px;height:794px}' : '.sheet{page-break-after:always;break-after:page}') + '</style></head><body>' +
+      current.map(function (s) { var h = s.html.split(CREDIT).join(''); return rot ? '<div class="rp"><div>' + h + '</div></div>' : h; }).join('') + '</body></html>';
     try { await dl.save({ filename: fileName('html'), data: html }); setStatus('저장했어요. 파일을 열어 인쇄하세요.'); } catch (e) { saveErr(e); }
   });
 
-  $('btn-pdf').addEventListener('click', async function () {
-    if (!current.length) return;
+  function rotateCanvas(cv) {
+    var o = document.createElement('canvas'); o.width = cv.height; o.height = cv.width;
+    var c = o.getContext('2d'); c.translate(o.width, 0); c.rotate(Math.PI / 2); c.drawImage(cv, 0, 0); return o;
+  }
+  /* groups: [{ sheets: [...] }]; a group is all landscape or all portrait. Pages are A4. */
+  async function buildPdf(groups, host) {
+    var pdf = null;
+    for (var gi = 0; gi < groups.length; gi++) {
+      var sh = groups[gi].sheets, land = sh[0].w > sh[0].h, rot = land, ori = (land && !rot) ? 'landscape' : 'portrait';
+      for (var i = 0; i < sh.length; i++) {
+        host.innerHTML = sh[i].html.split(CREDIT).join('');
+        var cv = await window.html2canvas(host.firstElementChild, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        if (!pdf) pdf = new window.jspdf.jsPDF({ orientation: ori, unit: 'mm', format: 'a4' }); else pdf.addPage('a4', ori);
+        if (rot) cv = rotateCanvas(cv);
+        pdf.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, (land && !rot) ? 297 : 210, (land && !rot) ? 210 : 297);
+      }
+    }
+    return pdf.output('blob');
+  }
+  async function savePdf(getGroups, name) {
     if (inApp()) return inAppMsg();
     if (!window.html2canvas || !window.jspdf) return setStatus('PDF 도구를 불러오지 못했어요. 인쇄용 HTML로 저장해 주세요.', true);
     var dl = await getDownloads();
     if (!dl) return setStatus('이 화면에서는 파일 저장을 쓸 수 없어요. claude.ai에서 이 페이지를 직접 열어 주세요.', true);
-    var btn = $('btn-pdf'); btn.disabled = true; setStatus('PDF를 만드는 중이에요…');
+    var g = getGroups();
+    if (!g.groups.length) return setStatus(g.note || '저장할 내용이 없어요.', true);
+    var btns = [$('btn-pdf'), $('btn-pdf-all')]; btns.forEach(function (x) { x.disabled = true; });
+    setStatus('PDF를 만드는 중이에요…');
     var host = document.createElement('div');
     host.style.cssText = 'position:fixed;left:-20000px;top:0;background:#fff';
     document.body.appendChild(host);
     try {
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      var land = current[0].w > current[0].h;
-      var pdf = new window.jspdf.jsPDF({ orientation: land ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
-      for (var i = 0; i < current.length; i++) {
-        host.innerHTML = current[i].html.split(CREDIT).join('');
-        var el = host.firstElementChild;
-        var cv = await window.html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-        if (i > 0) pdf.addPage('a4', land ? 'landscape' : 'portrait');
-        pdf.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, land ? 297 : 210, land ? 210 : 297);
-      }
-      var blob = pdf.output('blob');
-      await dl.save({ filename: fileName('pdf'), data: blob });
-      setStatus('저장했어요.');
+      var blob = await buildPdf(g.groups, host);
+      await dl.save({ filename: name, data: blob });
+      setStatus('저장했어요.' + (g.note ? ' ' + g.note : ''));
     } catch (e) {
       if (e && e.code) saveErr(e); else setStatus('PDF를 만들지 못했어요. 인쇄용 HTML로 저장해 주세요.', true);
     } finally {
-      host.remove(); btn.disabled = false;
+      host.remove(); btns.forEach(function (x) { x.disabled = false; });
     }
+  }
+  $('btn-pdf').addEventListener('click', function () {
+    if (!current.length) return;
+    savePdf(function () { return { groups: [{ sheets: current }] }; }, fileName('pdf'));
   });
+  $('btn-pdf-all').addEventListener('click', function () {
+    var m = buildModel(st);
+    if (m.error) return setStatus(m.error, true);
+    var labels = { plan: '과목 계획표', cal: '달력형', week: '주간형', retro: '시험 후 회고' }, skipped = [];
+    savePdf(function () {
+      var groups = [];
+      ['plan', 'cal', 'week', 'retro'].forEach(function (t) {
+        var r = sheetsFor(t, m);
+        if (r.error) skipped.push(labels[t]); else groups.push({ sheets: r });
+      });
+      return { groups: groups, note: skipped.length ? '(' + skipped.join(', ') + '은(는) 칸이 좁아 빠졌어요. 체크 칸 수나 기간을 줄이면 들어가요.)' : '' };
+    }, ((st.title || '플래너').replace(/[\\/:*?"<>|]/g, '').trim() || '플래너') + '-전체.pdf');
+  });
+
+  /* In-page calendar: the browser's own date popup does not open inside some embedded views, so we draw one. */
+  (function () {
+    var ids = ['f-start', 'f-exam-start', 'f-exam-end'], pop = document.createElement('div'), cur = null, vy = 0, vm = 0;
+    pop.id = 'dp'; document.body.appendChild(pop);
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function iso(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d); }
+    function valid(v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || ''); }
+    function place() {
+      var r = cur.getBoundingClientRect(), top = r.bottom + 4, left = Math.min(r.left, window.innerWidth - 276);
+      if (top + 300 > window.innerHeight && r.top > 300) top = r.top - 304;
+      pop.style.top = Math.max(4, top) + 'px'; pop.style.left = Math.max(4, left) + 'px';
+    }
+    function render() {
+      var min = valid(cur.min) ? cur.min : '', val = cur.value, today = iso(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+      var first = new Date(vy, vm, 1).getDay(), days = new Date(vy, vm + 1, 0).getDate();
+      var h = '<div class="dp-h"><button type="button" data-n="-1" aria-label="이전 달">‹</button><span>' + vy + '년 ' + (vm + 1) + '월</span><button type="button" data-n="1" aria-label="다음 달">›</button></div><div class="dp-g">';
+      ['일', '월', '화', '수', '목', '금', '토'].forEach(function (w) { h += '<div class="dp-w">' + w + '</div>'; });
+      for (var i = 0; i < first; i++) h += '<div></div>';
+      for (var d = 1; d <= days; d++) {
+        var v = iso(vy, vm, d), dis = min && v < min;
+        h += '<button type="button" class="dp-d' + (v === val ? ' sel' : '') + (v === today ? ' today' : '') + '" data-v="' + v + '"' + (dis ? ' disabled' : '') + '>' + d + '</button>';
+      }
+      pop.innerHTML = h + '</div>';
+    }
+    function open(el) {
+      cur = el;
+      var base = valid(el.value) ? el.value : (valid(el.min) ? el.min : iso(new Date().getFullYear(), new Date().getMonth(), 1));
+      vy = Number(base.slice(0, 4)); vm = Number(base.slice(5, 7)) - 1;
+      render(); pop.style.display = 'block'; place();
+    }
+    function close() { pop.style.display = 'none'; cur = null; }
+    ids.forEach(function (id) {
+      var el = $(id);
+      el.addEventListener('click', function () { if (cur === el && pop.style.display === 'block') close(); else open(el); });
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(el); } else if (e.key === 'Escape') close(); });
+    });
+    pop.addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t || !cur) return;
+      if (t.hasAttribute('data-n')) { vm += Number(t.getAttribute('data-n')); if (vm < 0) { vm = 11; vy--; } if (vm > 11) { vm = 0; vy++; } render(); return; }
+      if (t.disabled) return;
+      cur.value = t.getAttribute('data-v');
+      cur.dispatchEvent(new Event('input', { bubbles: true })); cur.dispatchEvent(new Event('change', { bubbles: true }));
+      close();
+    });
+    document.addEventListener('mousedown', function (e) { if (cur && !pop.contains(e.target) && e.target !== cur) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    window.addEventListener('resize', function () { if (cur) place(); });
+  })();
 
   renderSubjects();
   selectTab(st.tab || 'cal');

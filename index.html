@@ -33,7 +33,7 @@ h1 { margin: 0; font-size: 24px; line-height: 1.25; font-weight: 800; text-wrap:
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 .card h2 { margin: 0; font-size: 16px; font-weight: 800; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 15px; font-weight: 700; }
 .field span.hint { font-weight: 400; color: var(--mute); }
 input[type="text"], input[type="date"], input[type="number"], select {
   font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: var(--surface);
@@ -82,15 +82,15 @@ button:disabled { opacity: 0.5; cursor: default; }
 .msg { padding: 24px; text-align: center; color: var(--mute); font-size: 14px; }
 
 /* ===== A4 sheet styles (used by preview, PDF and saved HTML) ===== */
-.sheet { background: #FFFFFF; color: #17284B; font-family: 'Pretendard','Pretendard Variable','Noto Sans KR',sans-serif; box-sizing: border-box; overflow: hidden; position: relative; }
+.sheet { background: #FFFFFF; color: #0F1D3A; font-family: 'Pretendard','Pretendard Variable','Noto Sans KR',sans-serif; box-sizing: border-box; overflow: hidden; position: relative; }
 .sheet * { box-sizing: border-box; }
 .sheet h1 { margin: 0; font-weight: 800; line-height: 1.2; }
-.sheet .cb { display: inline-block; width: 16px; height: 16px; border: 1.5px solid #17284B; border-radius: 3px; flex: none; }
-.sheet .ln { flex: 1; min-width: 0; border-bottom: 1px solid #8A94A8; }
+.sheet .cb { display: inline-block; width: 16px; height: 16px; border: 2px solid #17284B; border-radius: 3px; flex: none; }
+.sheet .ln { flex: 1; min-width: 0; border-bottom: 1.5px solid #4F5A70; }
 .sheet .chk { display: flex; align-items: flex-end; gap: 6px; }
 .sheet .fld { display: flex; align-items: flex-end; gap: 6px; font-size: 14px; font-weight: 700; }
 .sheet .fld .ln { height: 20px; }
-.sheet .tag { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.sheet .tag { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 15px; font-weight: 700; }
 @media print {
   body { padding: 0; background: #fff; }
 }
@@ -293,7 +293,7 @@ function calSheet(m) {
     for (var di = 0; di < 7; di++) {
       var d = addDays(m.weeks[wi], di);
       var info = dayInfo(m, d);
-      var bd = (di < 6 ? 'border-right:1px solid #C9D0DD;' : '') + (wi < weeks - 1 ? 'border-bottom:1px solid #C9D0DD;' : '');
+      var bd = (di < 6 ? 'border-right:1px solid #8B96AB;' : '') + (wi < weeks - 1 ? 'border-bottom:1px solid #8B96AB;' : '');
       var base = 'min-height:0;overflow:hidden;' + bd;
       if (!info.inRange) { cells += '<div style="' + base + 'background:#F2F4F8"></div>'; continue; }
       var label = (d.getTime() === m.start.getTime() || d.getDate() === 1 || d.getTime() === m.es.getTime()) ? md(d) : String(d.getDate());
@@ -312,7 +312,7 @@ function calSheet(m) {
       var ac = examsOn(m, d); if (ac.length) { hasEx = true; }
       cells += '<div style="' + base + 'padding:6px 8px;display:flex;flex-direction:column;gap:4px">' +
         '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px"><b style="font-size:18px;line-height:1.2">' + label + '</b>' +
-        '<span style="font-size:11px;font-weight:800;color:#C0392B;white-space:nowrap;overflow:hidden">' + (ac.length ? '시험 ' + esc(examShort(ac)) : '') + '</span>' +
+        '<span style="font-size:13px;font-weight:800;color:#C0392B;white-space:nowrap;overflow:hidden">' + (ac.length ? '시험 ' + esc(examShort(ac)) : '') + '</span>' +
         '</div>' +
         checkRows(m.checks, rh, m.split ? SPLIT_S : null) + '</div>';
     }
@@ -320,13 +320,13 @@ function calSheet(m) {
   var html = '<div class="sheet" style="width:' + W + 'px;height:' + H + 'px;padding:40px 48px;display:flex;flex-direction:column;gap:10px">' +
     '<div style="display:flex;justify-content:space-between;align-items:flex-end;height:44px">' +
       '<div style="display:flex;align-items:flex-end;gap:16px"><h1 style="font-size:26px">' + esc(m.title) + '</h1>' +
-      '<div style="font-size:14px;font-weight:700;color:#2750C8;padding-bottom:3px">시험 ' + mdw(m.es) + (m.ee > m.es ? ' ~ ' + mdw(m.ee) : '') + '</div>' +
+      '<div style="font-size:16px;font-weight:700;color:#2750C8;padding-bottom:3px">시험 ' + mdw(m.es) + (m.ee > m.es ? ' ~ ' + mdw(m.ee) : '') + '</div>' +
       '</div></div>' +
-    '<div style="border:1px solid #C9D0DD;border-radius:8px;overflow:hidden;display:flex;flex-direction:column">' +
-      '<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;height:28px;background:#EEF3FF;font-size:13px;font-weight:700;border-bottom:1px solid #C9D0DD">' + head + '</div>' +
+    '<div style="border:1px solid #8B96AB;border-radius:8px;overflow:hidden;display:flex;flex-direction:column">' +
+      '<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;height:28px;background:#EEF3FF;font-size:15px;font-weight:700;border-bottom:1px solid #8B96AB">' + head + '</div>' +
       '<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(' + weeks + ',minmax(0,1fr));height:' + gridH + 'px">' + cells + '</div>' +
     '</div>' +
-    '<div style="font-size:12px;line-height:1.4;color:#556070">' + (m.split
+    '<div style="font-size:14px;line-height:1.4;color:#2B3752">' + (m.split
       ? '체크 칸은 <b>학교</b>=학교 시험공부, <b>학원</b>=학원 숙제·복습, <b>보충</b>=오답·암기·보충입니다. 해당 없는 날은 비워 두고, 못 한 공부는 몰아넣지 않고 분량과 일정을 조정합니다.'
       : '했으면 네모 칸에 ✓ 표시하고, 줄에는 과목이나 할 일을 적습니다. 못 한 날은 비워 두고 다음 날 이어서 합니다.') +
       (hasEx ? ' 시험 날에는 시험 본 과목을 체크합니다.' : '') + '</div>' +
@@ -345,12 +345,12 @@ function weekSheets(m) {
     var rows = '';
     for (var di = 0; di < 7; di++) {
       var d = addDays(ws0, di), info = dayInfo(m, d);
-      var bt = di > 0 ? 'border-top:1px solid #C9D0DD;' : '';
-      var left = '<div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;line-height:1.2">' + WD[d.getDay()] + '</b><span style="font-size:13px;color:#556070">' + md(d) + (info.inRange && info.n > 0 ? ' · D-' + info.n : '') + '</span>' + (examsOn(m, d).length ? '<span style="font-size:11px;font-weight:800;line-height:1.3;color:#C0392B">시험 ' + esc(examShort(examsOn(m, d))) + '</span>' : '') + '</div>';
+      var bt = di > 0 ? 'border-top:1px solid #8B96AB;' : '';
+      var left = '<div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;line-height:1.2">' + WD[d.getDay()] + '</b><span style="font-size:15px;color:#2B3752">' + md(d) + '</span>' + (info.inRange && info.n > 0 ? '<span style="font-size:15px;font-weight:700;color:#2B3752">D-' + info.n + '</span>' : '') + (examsOn(m, d).length ? '<span style="font-size:13px;font-weight:800;line-height:1.3;color:#C0392B">시험 ' + esc(examShort(examsOn(m, d))) + '</span>' : '') + '</div>';
       if (!info.inRange) {
         rows += '<div style="flex:1;min-height:0;' + bt + 'background:#F2F4F8"></div>';
       } else if (info.isExam) {
-        rows += '<div style="flex:1;min-height:0;' + bt + 'display:flex;align-items:stretch"><div style="width:100px;flex:none;background:#17284B;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 12px"><b style="font-size:20px">' + WD[d.getDay()] + '</b><div style="font-size:13px">' + md(d) + '</div></div><div style="flex:1;padding:0 16px;display:flex;flex-direction:column;justify-content:center;color:#17284B">'+ (examsOn(m, d).length ? '<div style="display:flex;flex-wrap:wrap;gap:4px 18px">' + examsOn(m, d).map(function (x) { return examCheck(x, 16, 14); }).join('') + '</div>' : '') + '</div></div>';
+        rows += '<div style="flex:1;min-height:0;' + bt + 'display:flex;align-items:stretch"><div style="width:100px;flex:none;background:#17284B;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 12px"><b style="font-size:20px">' + WD[d.getDay()] + '</b><div style="font-size:15px">' + md(d) + '</div></div><div style="flex:1;padding:0 16px;display:flex;flex-direction:column;justify-content:center;color:#17284B">'+ (examsOn(m, d).length ? '<div style="display:flex;flex-wrap:wrap;gap:4px 18px">' + examsOn(m, d).map(function (x) { return examCheck(x, 16, 14); }).join('') + '</div>' : '') + '</div></div>';
       } else {
         rows += '<div style="flex:1;min-height:0;' + bt + 'display:grid;grid-template-columns:76px 1fr;align-items:center;padding:0 12px;gap:16px">' + left +
           '<div style="display:flex;flex-direction:column;gap:4px">' + checkRows(m.checks, rh, m.split ? SPLIT_L : null) + '</div></div>';
@@ -360,19 +360,19 @@ function weekSheets(m) {
     var lastDay = we0 > m.ee ? m.ee : we0;
     var html = '<div class="sheet" style="width:' + W + 'px;height:' + H + 'px;padding:48px;display:flex;flex-direction:column;gap:16px">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-end;height:58px">' +
-        '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:700;color:#2750C8">' + esc(m.title) + ' · ' + (wi + 1) + '주차</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:15px;font-weight:700;color:#2750C8">' + esc(m.title) + ' · ' + (wi + 1) + '주차</div>' +
         '<h1 style="font-size:28px">' + md(firstDay) + ' ~ ' + md(lastDay) + '</h1></div>' +
-        '<div style="font-size:13px;font-weight:700">시험까지 <span style="font-size:22px">' + (diff(m.es, firstDay) > 0 ? 'D-' + diff(m.es, firstDay) : 'D-day') + '</span></div></div>' +
-      '<div style="display:flex;align-items:flex-end;gap:10px;background:#EEF3FF;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;height:44px"><span style="white-space:nowrap">이번 주 꼭 해내고 싶은 공부</span><span class="ln" style="height:20px"></span></div>' +
-      '<div style="border:1px solid #C9D0DD;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;height:' + (bodyH + 30) + 'px">' +
-        '<div style="display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:center;height:30px;padding:0 12px;background:#EEF3FF;font-size:13px;font-weight:700;border-bottom:1px solid #C9D0DD"><div>요일</div><div>할 일 · 끝내면 체크</div></div>' +
+        '<div style="font-size:15px;font-weight:700">시험까지 <span style="font-size:22px">' + (diff(m.es, firstDay) > 0 ? 'D-' + diff(m.es, firstDay) : 'D-day') + '</span></div></div>' +
+      '<div style="display:flex;align-items:flex-end;gap:10px;background:#EEF3FF;border-radius:8px;padding:12px 16px;font-size:16px;font-weight:700;height:44px"><span style="white-space:nowrap">이번 주 꼭 해내고 싶은 공부</span><span class="ln" style="height:20px"></span></div>' +
+      '<div style="border:1px solid #8B96AB;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;height:' + (bodyH + 30) + 'px">' +
+        '<div style="display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:center;height:30px;padding:0 12px;background:#EEF3FF;font-size:15px;font-weight:700;border-bottom:1px solid #8B96AB"><div>요일</div><div>할 일 · 끝내면 체크</div></div>' +
         rows + '</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px;height:150px"><div style="font-size:16px;font-weight:800">주간 피드백</div>' +
         '<div style="display:flex;gap:10px;flex:1">' +
         ['이번 주 잘한 공부는?', '못한 공부는? 왜 못 했을까?', '다음 주에는 뭘 바꿔볼까?'].map(function (t) {
-          return '<div style="flex:1;border:1px solid #C9D0DD;border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:700">' + t + '</div><span class="ln" style="height:22px;flex:none"></span><span class="ln" style="height:22px;flex:none"></span></div>';
+          return '<div style="flex:1;border:1px solid #8B96AB;border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px"><div style="font-size:15px;font-weight:700">' + t + '</div><span class="ln" style="height:22px;flex:none"></span><span class="ln" style="height:22px;flex:none"></span></div>';
         }).join('') + '</div></div>' +
-      '<div style="font-size:12px;line-height:1.4;color:#556070;height:34px">못한 공부는 무조건 다음 날로 옮기지 않습니다. 꼭 필요한 공부인지 생각하고, 분량을 줄이거나 날짜를 바꾸거나 빼도 됩니다.</div>' +
+      '<div style="font-size:13px;line-height:1.4;color:#2B3752;height:34px">못한 공부는 무조건 다음 날로 옮기지 않습니다. 꼭 필요한 공부인지 생각하고, 분량을 줄이거나 날짜를 바꾸거나 빼도 됩니다.</div>' +
       '</div>';
     out.push({ w: W, h: H, html: html });
   }
@@ -392,29 +392,29 @@ function planPage(m, chunk, pageNo, pages, maxN) {
   subs.forEach(function (s, i) {
     var c = PAL[chunk[i].i % PAL.length];
     var rg = (s.range || '').trim();
-    rows += '<div style="display:grid;grid-template-columns:' + cols + ';align-items:center;height:' + rowH + 'px;padding:0 12px;border-top:1px solid #C9D0DD;gap:8px">' +
-      '<div><span class="tag" style="background:' + c[0] + ';color:' + c[1] + '">' + esc(s.name) + '</span><div style="font-size:11px;color:#556070;margin-top:4px;padding-left:2px">' + (s.exam ? '<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span class="cb" style="width:13px;height:13px"></span>' + esc(mdw(pd(s.exam))) + '</span>' : '') + '</div></div>' +
-      (rg ? '<div style="font-size:13px;line-height:1.4;padding-right:4px;overflow:hidden">' + esc(rg) + '</div>'
+    rows += '<div style="display:grid;grid-template-columns:' + cols + ';align-items:center;height:' + rowH + 'px;padding:0 12px;border-top:1px solid #8B96AB;gap:8px">' +
+      '<div><span class="tag" style="background:' + c[0] + ';color:' + c[1] + '">' + esc(s.name) + '</span><div style="font-size:13px;color:#2B3752;margin-top:4px;padding-left:2px">' + (s.exam ? '<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span class="cb" style="width:13px;height:13px"></span>' + esc(mdw(pd(s.exam))) + '</span>' : '') + '</div></div>' +
+      (rg ? '<div style="font-size:15px;line-height:1.4;padding-right:4px;overflow:hidden">' + esc(rg) + '</div>'
           : writeLines(rowH, 6)) +
       '<div></div>' +
       '<div></div>' +
-      '<div style="display:flex;flex-direction:column;gap:7px;font-size:12px"><span style="display:flex;align-items:center;gap:5px"><span class="cb" style="width:13px;height:13px"></span>같이 정함</span><span style="display:flex;align-items:center;gap:5px"><span class="cb" style="width:13px;height:13px"></span>직접 정함</span></div>' +
-      '<div style="display:flex;align-items:flex-end;gap:4px;font-size:13px"><span class="ln" style="height:20px"></span>점</div></div>';
+      '<div style="display:flex;flex-direction:column;gap:7px;font-size:14px"><span style="display:flex;align-items:center;gap:5px"><span class="cb" style="width:13px;height:13px"></span>같이 정함</span><span style="display:flex;align-items:center;gap:5px"><span class="cb" style="width:13px;height:13px"></span>직접 정함</span></div>' +
+      '<div style="display:flex;align-items:flex-end;gap:4px;font-size:15px"><span class="ln" style="height:20px"></span>점</div></div>';
   });
-  if (!subs.length) rows = '<div class="msg" style="padding:24px;text-align:center;color:#556070;font-size:14px">과목을 등록하면 이 표에 들어갑니다.</div>';
+  if (!subs.length) rows = '<div class="msg" style="padding:24px;text-align:center;color:#2B3752;font-size:16px">과목을 등록하면 이 표에 들어갑니다.</div>';
   var html = '<div class="sheet" style="width:' + W + 'px;height:' + H + 'px;padding:48px;display:flex;flex-direction:column;gap:16px">' +
     '<div style="display:flex;justify-content:space-between;align-items:flex-end;height:58px">' +
-      '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:700;color:#2750C8">과목 계획표' + (pages > 1 ? ' (' + pageNo + '/' + pages + ')' : '') + '</div><h1 style="font-size:28px">' + esc(m.title) + '</h1></div>' + '' + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:15px;font-weight:700;color:#2750C8">과목 계획표' + (pages > 1 ? ' (' + pageNo + '/' + pages + ')' : '') + '</div><h1 style="font-size:28px">' + esc(m.title) + '</h1></div>' + '' + '</div>' +
     '<div style="flex:none;background:#17284B;color:#fff;border-radius:10px;padding:12px 22px;height:' + (76 + schedH) + 'px;display:flex;flex-direction:column;justify-content:space-between">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;height:52px">' +
-      '<div><div style="font-size:14px;font-weight:500">시험</div><div style="font-size:22px;font-weight:800">' + mdw(m.es) + (m.ee > m.es ? ' ~ ' + mdw(m.ee) : '') + '</div></div>' +
-      '<div style="text-align:right"><div style="font-size:36px;line-height:1;font-weight:800">' + (diff(m.es, m.start) > 0 ? 'D-' + diff(m.es, m.start) : 'D-day') + '</div><div style="font-size:13px">' + md(m.start) + ' 기준</div></div></div>' +
-      (sched ? '<div style="display:flex;flex-wrap:wrap;gap:2px 18px;font-size:12px;line-height:1.4;border-top:1px solid rgba(255,255,255,.25);padding-top:6px;max-height:40px;overflow:hidden">' + sched + '</div>' : '') + '</div>' +
-    '<div style="display:flex;align-items:flex-end;gap:10px;height:50px;font-size:14px;font-weight:700;padding-bottom:6px"><span style="white-space:nowrap">나의 한 마디</span><span style="font-weight:400;color:#556070;font-size:13px;white-space:nowrap">각오, 다짐, 목표</span><span class="ln" style="height:22px"></span></div>' +
-    '<div style="flex:none;border:1px solid #C9D0DD;border-radius:8px;overflow:hidden;height:' + (34 + (subs.length ? subs.length * rowH : 70) + 2) + 'px">' +
-      '<div style="display:grid;grid-template-columns:' + cols + ';gap:8px;align-items:center;height:34px;padding:0 12px;background:#EEF3FF;font-size:13px;font-weight:700"><div>과목</div><div>시험 범위</div><div>어떻게 공부할까</div><div>분량 · 횟수</div><div>계획한 사람</div><div>목표 점수</div></div>' +
+      '<div><div style="font-size:16px;font-weight:500">시험</div><div style="font-size:22px;font-weight:800">' + mdw(m.es) + (m.ee > m.es ? ' ~ ' + mdw(m.ee) : '') + '</div></div>' +
+      '<div style="text-align:right"><div style="font-size:36px;line-height:1;font-weight:800">' + (diff(m.es, m.start) > 0 ? 'D-' + diff(m.es, m.start) : 'D-day') + '</div><div style="font-size:15px">' + md(m.start) + ' 기준</div></div></div>' +
+      (sched ? '<div style="display:flex;flex-wrap:wrap;gap:2px 18px;font-size:14px;line-height:1.4;border-top:1px solid rgba(255,255,255,.25);padding-top:6px;max-height:40px;overflow:hidden">' + sched + '</div>' : '') + '</div>' +
+    '<div style="display:flex;align-items:flex-end;gap:10px;height:50px;font-size:16px;font-weight:700;padding-bottom:6px"><span style="white-space:nowrap">나의 한 마디</span><span style="font-weight:400;color:#2B3752;font-size:15px;white-space:nowrap">각오, 다짐, 목표</span><span class="ln" style="height:22px"></span></div>' +
+    '<div style="flex:none;border:1px solid #8B96AB;border-radius:8px;overflow:hidden;height:' + (34 + (subs.length ? subs.length * rowH : 70) + 2) + 'px">' +
+      '<div style="display:grid;grid-template-columns:' + cols + ';gap:8px;align-items:center;height:34px;padding:0 12px;background:#EEF3FF;font-size:15px;font-weight:700"><div>과목</div><div>시험 범위</div><div>어떻게 공부할까</div><div>분량 · 횟수</div><div>계획한 사람</div><div>목표 점수</div></div>' +
       rows + '</div>' +
-    '<div style="font-size:13px;color:#556070"><div style="padding-left:12px;text-indent:-12px">* 시험 범위는 등록한 내용이 들어가며, 비워 두면 직접 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 분량·횟수는 \'개념 1회, 문제풀이 1회, 오답 1회\'처럼 구체적으로 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 계획한 사람은 처음에는 \'같이\'가 많아도 괜찮고, 다음 시험에 \'직접\'이 늘면 됩니다.</div></div>' +
+    '<div style="font-size:15px;color:#2B3752"><div style="padding-left:12px;text-indent:-12px">* 시험 범위는 등록한 내용이 들어가며, 비워 두면 직접 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 분량·횟수는 \'개념 1회, 문제풀이 1회, 오답 1회\'처럼 구체적으로 적습니다.</div><div style="padding-left:12px;text-indent:-12px">* 계획한 사람은 처음에는 \'같이\'가 많아도 괜찮고, 다음 시험에 \'직접\'이 늘면 됩니다.</div></div>' +
     '</div>';
   return { w: W, h: H, html: html };
 }
@@ -435,21 +435,21 @@ function retroPage(m, chunk, pageNo, pages, maxN) {
   subs.forEach(function (s, i) {
     var c = PAL[chunk[i].i % PAL.length];
     var ln2 = writeLines(rowH, 5);
-    var pt = '<div style="display:flex;align-items:flex-end;gap:4px;font-size:13px"><span class="ln" style="height:20px"></span>점</div>';
-    var ex = '<div style="display:flex;flex-direction:column;gap:3px;font-size:11px">' + ['계획대로 했다', '일부만 했다', '거의 못 했다'].map(function (t) { return '<span style="display:flex;align-items:center;gap:4px"><span class="cb" style="width:12px;height:12px"></span>' + t + '</span>'; }).join('') + '</div>';
-    rows += '<div style="display:grid;grid-template-columns:' + cols + ';align-items:center;height:' + rowH + 'px;padding:0 12px;border-top:1px solid #C9D0DD;gap:8px">' +
+    var pt = '<div style="display:flex;align-items:flex-end;gap:4px;font-size:15px"><span class="ln" style="height:20px"></span>점</div>';
+    var ex = '<div style="display:flex;flex-direction:column;gap:3px;font-size:13px">' + ['계획대로 했다', '일부만 했다', '거의 못 했다'].map(function (t) { return '<span style="display:flex;align-items:center;gap:4px"><span class="cb" style="width:12px;height:12px"></span>' + t + '</span>'; }).join('') + '</div>';
+    rows += '<div style="display:grid;grid-template-columns:' + cols + ';align-items:center;height:' + rowH + 'px;padding:0 12px;border-top:1px solid #8B96AB;gap:8px">' +
       '<div><span class="tag" style="background:' + c[0] + ';color:' + c[1] + '">' + esc(s.name) + '</span></div>' + pt + pt + ex + ln2 + ln2 + '</div>';
   });
-  if (!subs.length) rows = '<div style="padding:24px;text-align:center;color:#556070;font-size:14px">과목을 등록하면 이 표에 들어갑니다.</div>';
+  if (!subs.length) rows = '<div style="padding:24px;text-align:center;color:#2B3752;font-size:16px">과목을 등록하면 이 표에 들어갑니다.</div>';
   var html = '<div class="sheet" style="width:' + W + 'px;height:' + H + 'px;padding:48px;display:flex;flex-direction:column;gap:16px">' +
     '<div style="display:flex;justify-content:space-between;align-items:flex-end;height:58px">' +
-      '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:700;color:#2750C8">시험 후 회고' + (pages > 1 ? ' (' + pageNo + '/' + pages + ')' : '') + '</div><h1 style="font-size:28px">' + esc(m.title) + '</h1></div>' + '' + '</div>' +
-    '<div style="font-size:13px;color:#556070;height:20px">점수가 낮았다면 공부 방법의 문제인지, 계획한 분량을 못 한 것인지 ‘계획 실행’으로 먼저 구분해 봅니다.</div>' +
-    '<div style="flex:none;border:1px solid #C9D0DD;border-radius:8px;overflow:hidden;height:' + (34 + (subs.length ? subs.length * rowH : 70) + 2) + 'px">' +
-      '<div style="display:grid;grid-template-columns:' + cols + ';gap:8px;align-items:center;height:34px;padding:0 12px;background:#EEF3FF;font-size:13px;font-weight:700"><div>과목</div><div>목표</div><div>결과</div><div>계획 실행</div><div>잘한 점</div><div>다음에 바꿀 점</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:15px;font-weight:700;color:#2750C8">시험 후 회고' + (pages > 1 ? ' (' + pageNo + '/' + pages + ')' : '') + '</div><h1 style="font-size:28px">' + esc(m.title) + '</h1></div>' + '' + '</div>' +
+    '<div style="font-size:15px;color:#2B3752;height:20px">점수가 낮았다면 공부 방법의 문제인지, 계획한 분량을 못 한 것인지 ‘계획 실행’으로 먼저 구분해 봅니다.</div>' +
+    '<div style="flex:none;border:1px solid #8B96AB;border-radius:8px;overflow:hidden;height:' + (34 + (subs.length ? subs.length * rowH : 70) + 2) + 'px">' +
+      '<div style="display:grid;grid-template-columns:' + cols + ';gap:8px;align-items:center;height:34px;padding:0 12px;background:#EEF3FF;font-size:15px;font-weight:700"><div>과목</div><div>목표</div><div>결과</div><div>계획 실행</div><div>잘한 점</div><div>다음에 바꿀 점</div></div>' +
       rows + '</div>' +
     (last ? '<div style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0"><div style="font-size:16px;font-weight:800">이번 시험에서 가장 크게 배운 것</div>' +
-      '<div style="border:1px solid #C9D0DD;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:hidden"></div></div>' : '') +
+      '<div style="border:1px solid #8B96AB;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:hidden"></div></div>' : '') +
     '</div>';
   return { w: W, h: H, html: html };
 }
@@ -731,10 +731,10 @@ if (typeof document !== 'undefined') {
       var sh = groups[gi].sheets, land = sh[0].w > sh[0].h, rot = land, ori = (land && !rot) ? 'landscape' : 'portrait';
       for (var i = 0; i < sh.length; i++) {
         host.innerHTML = sh[i].html.split(CREDIT).join('');
-        var cv = await window.html2canvas(host.firstElementChild, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        var cv = await window.html2canvas(host.firstElementChild, { scale: 3, backgroundColor: '#ffffff', useCORS: true });
         if (!pdf) pdf = new window.jspdf.jsPDF({ orientation: ori, unit: 'mm', format: 'a4' }); else pdf.addPage('a4', ori);
         if (rot) cv = rotateCanvas(cv);
-        pdf.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, (land && !rot) ? 297 : 210, (land && !rot) ? 210 : 297);
+        pdf.addImage(cv.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, (land && !rot) ? 297 : 210, (land && !rot) ? 210 : 297);
       }
     }
     return pdf.output('blob');

@@ -136,21 +136,6 @@ button:disabled { opacity: 0.5; cursor: default; }
           <option value="0">일요일</option>
         </select>
       </label>
-      <label class="field" for="f-perpage">한 장당 과목 수 <span class="hint">과목 계획표·시험 후 회고</span>
-        <select id="f-perpage">
-          <option value="3">3개</option><option value="4">4개</option><option value="5">5개</option>
-          <option value="6" selected>6개</option><option value="7">7개</option><option value="8">8개</option>
-        </select>
-      </label>
-      <label class="field" for="f-checks">하루 체크 칸 수 <span class="hint">달력형·주간형</span>
-        <select id="f-checks">
-          <option value="1">1칸</option>
-          <option value="2">2칸</option>
-          <option value="3" selected>3칸</option>
-          <option value="4">4칸</option>
-          <option value="5">5칸</option>
-        </select>
-      </label>
     </div>
   </section>
 
@@ -167,6 +152,23 @@ button:disabled { opacity: 0.5; cursor: default; }
       <button type="button" role="tab" class="tab" id="tab-cal" data-tab="cal" aria-selected="false">② 달력형 (가로)</button>
       <button type="button" role="tab" class="tab" id="tab-week" data-tab="week" aria-selected="false">③ 주간형</button>
       <button type="button" role="tab" class="tab" id="tab-retro" data-tab="retro" aria-selected="false">④ 시험 후 회고</button>
+    </div>
+    <div class="grid" style="margin-top:14px">
+      <label class="field" for="f-perpage">한 장당 과목 수 <span class="hint">① 과목 계획표 · ④ 시험 후 회고에 적용</span>
+        <select id="f-perpage">
+          <option value="3">3개</option><option value="4">4개</option><option value="5">5개</option>
+          <option value="6" selected>6개</option><option value="7">7개</option><option value="8">8개</option>
+        </select>
+      </label>
+      <label class="field" for="f-checks">하루 체크 칸 수 <span class="hint">② 달력형 · ③ 주간형에 적용</span>
+        <select id="f-checks">
+          <option value="1">1칸</option>
+          <option value="2">2칸</option>
+          <option value="3" selected>3칸</option>
+          <option value="4">4칸</option>
+          <option value="5">5칸</option>
+        </select>
+      </label>
     </div>
     <div class="status">사용 순서: 시험 준비 시작 때 ① 과목 계획표 → 전체 일정 ② 달력형 → 매주 ③ 주간형 → 시험이 끝나면 ④ 시험 후 회고</div>
     <div class="actions">
